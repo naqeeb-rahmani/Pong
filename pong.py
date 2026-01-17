@@ -110,10 +110,8 @@ def confirm_target_score():
                 if target_score == p1_score:
                     menu1.write("Player 1 won", align = "center", font = ("Courier", 80, "normal"))
                 elif target_score == p2_or_ai_score:
-                    if p_vs_p:
-                        menu1.write("Player 2 won", align = "center", font = ("Courier", 80, "normal"))
-                    else: 
-                        menu1.write("AI won", align = "center", font = ("Courier", 80, "normal"))
+                    menu1.write("Player 2 won", align = "center", font = ("Courier", 80, "normal"))
+
                 screen.update()
                 time.sleep(0.026)
 
@@ -121,7 +119,18 @@ def confirm_target_score():
              while game_running:
                 if (target_score != p1_score) and (target_score != p2_or_ai_score):
                     move_ball_and_check_for_collisions()
+                    # simple-ai
+                    if ball.xcor() < 0:
+                        if player2.ycor() < ball.ycor():
+                            player2.goto(-377,player2.ycor() + 8)
+                        elif player2.ycor() > ball.ycor():
+                            player2.goto(-377,player2.ycor() - 8)
+                    #   /simple-ai
                     check_score()
+                if target_score == p1_score:
+                    menu1.write("Player 1 won", align = "center", font = ("Courier", 80, "normal"))
+                elif target_score == p2_or_ai_score:
+                    menu1.write("AI won", align = "center", font = ("Courier", 80, "normal"))
                     
                 screen.update()
                 time.sleep(0.026)
@@ -149,10 +158,10 @@ ball = Turtle("circle")
 ball.color("white")
 ball.penup()
 ball.goto(0,0)
-ball_direction_x = 10
-ball_direction_y = 10
+ball_direction_x = 6
+ball_direction_y = 6
 
-#---move-functions---#
+#---paddel-move-functions---#
 def p1_up():
     new_pos = player1.ycor() + 20
     if new_pos <= 250:
@@ -182,11 +191,19 @@ def move_ball_and_check_for_collisions():
     elif ball.ycor() < -270:
         ball_direction_y *= -1
     
-    if ball.distance(player1) < 30:
+    if ball.distance(player1) < 40 and ball_direction_x > 0:
         ball_direction_x *= -1
-    elif ball.distance(player2) < 30:
+    elif ball.distance(player2) < 40 and ball_direction_x < 0:
         ball_direction_x *= -1
 
+def ball_speed_increase():
+    global ball_direction_x, ball_direction_y
+    if (p2_or_ai_score + p1_score) == 3:
+        ball_direction_x += 2; ball_direction_y += 2
+    elif (p2_or_ai_score + p1_score) == 7:
+        ball_direction_x += 2; ball_direction_y += 2
+    elif (p2_or_ai_score + p1_score) == 12:
+        ball_direction_x += 2; ball_direction_y += 2
 
 #---score---#
 score = Turtle()
@@ -209,6 +226,7 @@ def check_score():
         ball.hideturtle()
         ball.goto(0,0)
         ball.showturtle()
+        ball_speed_increase()
 
 
 
